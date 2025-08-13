@@ -7,7 +7,7 @@ A responsive weather dashboard built with React and Tailwind CSS that allows use
 - Displays:
   - 🌡 Temperature
   - 💧 Humidity
-  - 🌬 wWind spee
+  - 🌬 Wind speed
   - ⛅ Weather condition icon
 - Fully responsive using Tailwind CSS utilities.
 - Fast and interactive user interface.
