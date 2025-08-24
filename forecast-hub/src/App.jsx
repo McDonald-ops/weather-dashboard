@@ -1,17 +1,36 @@
-import { useState, useEffect } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
-import './index.css'
-import './App.css'
+import { useEffect, useState } from "react";
+import WeatherCard from "./components/WeatherCard";
+import fetchWeather from "./components/fetchWeather";
 
-function App() {
-  console.log("API Key from .env:", import.meta.env.VITE_OPENWEATHER_API_KEY);
+export default function App() {
+  const [weather, setWeather] = useState(null);
+
+  // Load a default city when app starts
+  useEffect(() => {
+    fetchWeather("Lagos")
+      .then(setWeather)
+      .catch((err) => console.error(err));
+  }, []);
+
+  // Search handler
+  const getWeather = async (city) => {
+    try {
+      const data = await fetchWeather(city);
+      setWeather(data);
+    } catch (error) {
+      alert(error.message);
+    }
+  };
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold">Check the console for your API Key</h1>
+    <div
+      className="min-h-screen w-full flex items-center justify-center bg-center bg-no-repeat p-6"
+      style={{
+        backgroundImage: "url('/cover.jpg')",
+        backgroundSize: "cover",   
+      }}
+    >
+      <WeatherCard data={weather} onSearch={getWeather} />
     </div>
   );
 }
-
-export default App;
