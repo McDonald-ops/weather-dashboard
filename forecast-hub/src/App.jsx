@@ -18,7 +18,7 @@ function App() {
       setWeather(data);
     } catch (err) {
       setError(err.message);
-      setWeather(null);
+      
     }
   };
 
@@ -30,7 +30,9 @@ function App() {
         backgroundSize: "cover",
       }}
     >
-      {error && <ErrorMessage message={error} />}
+      {error && (
+        <ErrorMessage message={error} onClose={() => setError("")} />
+      )}
       <WeatherCard data={weather} onSearch={getWeather} />
     </div>
   );
