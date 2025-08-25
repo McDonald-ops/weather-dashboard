@@ -1,24 +1,35 @@
 import { useEffect, useState } from "react";
 import WeatherCard from "./components/WeatherCard";
 import fetchWeather from "./components/fetchWeather";
+import Loader from "./components/Loader";
+import ErrorMessage from "./components/ErrorMessage";
 
-export default function App() {
+function App() {
   const [weather, setWeather] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  // Load a default city when app starts
+  // Default city
   useEffect(() => {
-    fetchWeather("Lagos")
-      .then(setWeather)
-      .catch((err) => console.error(err));
+    getWeather("Lagos");
   }, []);
 
-  // Search handler
   const getWeather = async (city) => {
+    setLoading(true);
+    setError("");
     try {
       const data = await fetchWeather(city);
       setWeather(data);
-    } catch (error) {
-      alert(error.message);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const refreshWeather = () => {
+    if (weather?.name) {
+      getWeather(weather.name);
     }
   };
 
@@ -27,10 +38,20 @@ export default function App() {
       className="min-h-screen w-full flex items-center justify-center bg-center bg-no-repeat p-6"
       style={{
         backgroundImage: "url('/cover.jpg')",
-        backgroundSize: "cover",   
+        backgroundSize: "cover",
       }}
     >
-      <WeatherCard data={weather} onSearch={getWeather} />
+      {loading && <Loader />}
+      {!loading && (
+        <WeatherCard
+          data={weather}
+          onSearch={getWeather}
+          onRefresh={refreshWeather}
+        />
+      )}
+      <ErrorMessage message={error} onClose={() => setError("")} />
     </div>
   );
 }
+
+export default App;

@@ -5,7 +5,6 @@ function SearchBar({ onSearch }) {
         e.preventDefault();
         const city = e.target.city.value.trim();
         if (city) onSearch(city);
-        e.target.reset();
       }}
       className="flex flex-col gap-4 mt-6"
     >
@@ -23,3 +22,4 @@ function SearchBar({ onSearch }) {
 }
 
 export default SearchBar;
+
