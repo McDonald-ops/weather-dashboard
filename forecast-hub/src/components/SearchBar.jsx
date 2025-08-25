@@ -1,29 +1,25 @@
-// import { useState } from "react";
+function SearchBar({ onSearch }) {
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        const city = e.target.city.value.trim();
+        if (city) onSearch(city);
+        e.target.reset();
+      }}
+      className="flex flex-col gap-4 mt-6"
+    >
+      <input
+        name="city"
+        type="text"
+        placeholder="Search city here"
+        className="p-4 text-lg rounded-xl bg-white text-black placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
+      />
+      <button className="bg-teal-600 py-4 text-lg rounded-xl text-white font-bold hover:bg-teal-700 transition">
+        GET WEATHER
+      </button>
+    </form>
+  );
+}
 
-// function SearchBar({ onSearch }) {
-//   const [input, setInput] = useState("");
-
-//   function handleSubmit(e) {
-//     e.preventDefault();
-//     if (!input.trim()) return;
-//     onSearch(input);
-//     setInput(""); // clear input after search
-//   }
-
-//   return (
-//     <form onSubmit={handleSubmit} className="flex gap-2 mb-6">
-//       <input
-//         type="text"
-//         placeholder="Enter city"
-//         value={input}
-//         onChange={(e) => setInput(e.target.value)}
-//         className="flex-1 p-2 border rounded-lg"
-//       />
-//       <button className="bg-blue-600 text-white px-4 py-2 rounded-lg">
-//         Search
-//       </button>
-//     </form>
-//   );
-// }
-
-// export default SearchBar;
+export default SearchBar;
