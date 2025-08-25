@@ -15,15 +15,24 @@ function formatDateTime(dt, lat, lon) {
 }
 
 function WeatherCard({ data, onSearch }) {
-  if (!data) return null;
-
-  const { name, sys, main, wind, weather, dt, coord } = data;
   const bgImage = "/bg.jpeg";
+
+  let name = "—";
+  let sys = { country: "—" };
+  let main = { temp: 0, humidity: 0 };
+  let wind = { speed: 0 };
+  let weather = [{ description: "—", icon: "01d" }];
+  let localTime = DateTime.now();
+  let zoneName = "—";
+
+  if (data) {
+    const { dt, coord } = data;
+    ({ name, sys, main, wind, weather } = data);
+    ({ localTime, zoneName } = formatDateTime(dt, coord?.lat, coord?.lon));
+  }
 
   const iconCode = weather[0]?.icon;
   const weatherIcon = `https://openweathermap.org/img/wn/${iconCode}@4x.png`;
-
-  const { localTime, zoneName } = formatDateTime(dt, coord?.lat, coord?.lon);
 
   return (
     <div className="flex w-[700px] h-[400px] rounded-2xl shadow-2xl overflow-hidden">
@@ -67,7 +76,7 @@ function WeatherCard({ data, onSearch }) {
           </div>
           <div className="flex justify-between">
             <span>CLOUD</span>
-            <span className="font-light">{data.clouds?.all}%</span>
+            <span className="font-light">{data?.clouds?.all ?? "—"}%</span>
           </div>
           <div className="flex justify-between">
             <span>HUMIDITY</span>
