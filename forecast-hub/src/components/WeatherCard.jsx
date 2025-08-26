@@ -141,8 +141,8 @@ function WeatherCard({ data, onSearch, hasSearched }) {
         </div>
 
 
-        {/* SearchBar sticks to bottom and will not get pushed out */}
-        <div className="mt-auto">
+        {/* SearchBar sticks to bottom */}
+        <div className="mb-6">
           <SearchBar onSearch={onSearch} />
         </div>
       </div>
