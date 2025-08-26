@@ -40,7 +40,11 @@ function App() {
 
   return (
     <div
-      className="min-h-screen w-full flex flex-col items-center justify-center bg-center bg-no-repeat p-6"
+      className="
+        min-h-screen w-full 
+        flex flex-col items-center justify-center 
+        bg-center bg-no-repeat p-4 md:p-6
+      "
       style={{
         backgroundImage: "url('/cover.jpg')",
         backgroundSize: "cover",

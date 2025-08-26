@@ -79,10 +79,12 @@ function WeatherCard({ data, onSearch, hasSearched }) {
   }, []);
 
   return (
-    <div className="flex w-[700px] h-[400px] rounded-2xl shadow-2xl overflow-hidden">
+    <div
+      className="flex flex-col md:flex-row w-full max-w-[700px] h-auto md:h-[400px] rounded-2xl shadow-2xl overflow-hidden"
+    >
       {/* Left side */}
       <div
-        className="w-1/2 bg-cover bg-center flex flex-col justify-between p-6 text-white transition-all duration-700 ease-out relative"
+        className="w-full md:w-1/2 bg-cover bg-center flex flex-col justify-between p-4 md:p-6 text-white transition-all duration-700 ease-out relative"
         style={{
           backgroundImage: `url(${leftBg})`,
         }}
@@ -93,30 +95,30 @@ function WeatherCard({ data, onSearch, hasSearched }) {
           <img
             src={weatherIcon}
             alt="Weather Icon"
-            className="w-28 h-28 drop-shadow-lg"
+            className="w-20 h-20 md:w-28 md:h-28 drop-shadow-lg"
           />
         </div>
 
         <div className="flex flex-col relative z-10">
-          <p className="text-sm font-light">
+          <p className="text-xs md:text-sm font-light">
             {localTime.toFormat("yyyy-LL-dd HH:mm")}
           </p>
-          <p className="text-sm opacity-80">{zoneName}</p>
+          <p className="text-xs md:text-sm opacity-80">{zoneName}</p>
 
-          <h2 className="text-2xl font-semibold mt-2">
+          <h2 className="text-xl md:text-2xl font-semibold mt-2">
             {name}, {sys?.country}
           </h2>
 
-          <p className="text-6xl font-extrabold mt-2">
+          <p className="text-4xl md:text-6xl font-extrabold mt-2">
             {typeof main?.temp === "number" ? Math.round(main.temp) : main?.temp}°C
           </p>
         </div>
       </div>
 
       {/* Right side */}
-      <div className="w-1/2 bg-black/90 text-white flex flex-col p-6">
+      <div className="w-full md:w-1/2 bg-black/90 text-white flex flex-col p-4 md:p-6">
         {/* Top info block */}
-        <div className="space-y-4">
+        <div className="space-y-3 md:space-y-4 text-xs md:text-sm">
           <div className="flex justify-between">
             <span>CONDITION</span>
             <span className="font-light">{weather[0]?.description}</span>
@@ -140,9 +142,8 @@ function WeatherCard({ data, onSearch, hasSearched }) {
           <Forecast forecast={forecast} />
         </div>
 
-
         {/* SearchBar sticks to bottom */}
-        <div className="mb-6">
+        <div className="mb-4 md:mb-6">
           <SearchBar onSearch={onSearch} />
         </div>
       </div>
