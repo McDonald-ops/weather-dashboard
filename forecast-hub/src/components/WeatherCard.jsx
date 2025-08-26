@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react";
 import { DateTime } from "luxon";
 import tzlookup from "tz-lookup";
 import SearchBar from "./SearchBar";
+import Forecast from "./Forecast";
 
 // Utility to format date & time using tz-lookup
 function formatDateTime(dt, lat, lon) {
@@ -42,11 +43,13 @@ function WeatherCard({ data, onSearch, hasSearched }) {
   let weather = [{ description: "", icon: "01d" }];
   let localTime = DateTime.now();
   let zoneName = "UTC";
+  let forecast = [];
 
   if (data) {
     const { dt, coord } = data;
     ({ name, sys, main, wind, weather } = data);
     ({ localTime, zoneName } = formatDateTime(dt, coord?.lat, coord?.lon));
+    forecast = data.forecast ?? [];
   }
 
   const iconCode = weather[0]?.icon;
@@ -111,7 +114,8 @@ function WeatherCard({ data, onSearch, hasSearched }) {
       </div>
 
       {/* Right side */}
-      <div className="w-1/2 bg-black/90 text-white flex flex-col justify-between p-6">
+      <div className="w-1/2 bg-black/90 text-white flex flex-col p-6">
+        {/* Top info block */}
         <div className="space-y-4">
           <div className="flex justify-between">
             <span>CONDITION</span>
@@ -131,7 +135,16 @@ function WeatherCard({ data, onSearch, hasSearched }) {
           </div>
         </div>
 
-        <SearchBar onSearch={onSearch} />
+        {/* Forecast area */}
+        <div className="mt-3 mb-4 flex-1">
+          <Forecast forecast={forecast} />
+        </div>
+
+
+        {/* SearchBar sticks to bottom and will not get pushed out */}
+        <div className="mt-auto">
+          <SearchBar onSearch={onSearch} />
+        </div>
       </div>
     </div>
   );

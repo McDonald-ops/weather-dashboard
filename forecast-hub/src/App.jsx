@@ -8,9 +8,8 @@ function App() {
   const [error, setError] = useState("");
   const [hasSearched, setHasSearched] = useState(false); // remains false until user searches
 
-  // On mount fetch Lagos by default
+  // On mount fetch Lagos by default (not considered a user search)
   useEffect(() => {
-    // initial fetch is NOT considered a "user search"
     getWeather("Lagos", false);
   }, []);
 
@@ -31,6 +30,7 @@ function App() {
           wind: { speed: 0 },
           weather: [{ description: "—", icon: "01d" }],
           clouds: { all: 0 },
+          forecast: [], // empty forecast fallback
         });
       } else {
         setError(err.message || "Something went wrong");
