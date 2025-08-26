@@ -6,19 +6,35 @@ import ErrorMessage from "./components/ErrorMessage";
 function App() {
   const [weather, setWeather] = useState(null);
   const [error, setError] = useState("");
+  const [hasSearched, setHasSearched] = useState(false); // remains false until user searches
 
+  // On mount fetch Lagos by default
   useEffect(() => {
-    getWeather("Lagos");
+    // initial fetch is NOT considered a "user search"
+    getWeather("Lagos", false);
   }, []);
 
-  const getWeather = async (city) => {
+  const getWeather = async (city, isUserSearch = false) => {
     setError("");
     try {
       const data = await fetchWeather(city);
       setWeather(data);
+      if (isUserSearch) setHasSearched(true);
     } catch (err) {
-      setError(err.message);
-      
+      if (!isUserSearch && city.toLowerCase() === "lagos") {
+        setWeather({
+          dt: Math.floor(Date.now() / 1000),
+          coord: { lat: 6.5244, lon: 3.3792 }, // Lagos coordinates
+          name: "Lagos",
+          sys: { country: "NG" },
+          main: { temp: 0, humidity: 0 },
+          wind: { speed: 0 },
+          weather: [{ description: "—", icon: "01d" }],
+          clouds: { all: 0 },
+        });
+      } else {
+        setError(err.message || "Something went wrong");
+      }
     }
   };
 
@@ -30,10 +46,12 @@ function App() {
         backgroundSize: "cover",
       }}
     >
-      {error && (
-        <ErrorMessage message={error} onClose={() => setError("")} />
-      )}
-      <WeatherCard data={weather} onSearch={getWeather} />
+      {error && <ErrorMessage message={error} onClose={() => setError("")} />}
+      <WeatherCard
+        data={weather}
+        onSearch={(city) => getWeather(city, true)}
+        hasSearched={hasSearched}
+      />
     </div>
   );
 }

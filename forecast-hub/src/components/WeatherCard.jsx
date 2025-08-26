@@ -1,3 +1,4 @@
+import { useEffect, useMemo } from "react";
 import { DateTime } from "luxon";
 import tzlookup from "tz-lookup";
 import SearchBar from "./SearchBar";
@@ -14,16 +15,33 @@ function formatDateTime(dt, lat, lon) {
   }
 }
 
-function WeatherCard({ data, onSearch }) {
-  const bgImage = "/bg.jpeg";
+function selectBackground({ weatherArray, iconCode, hasSearched }) {
+  const defaultBg = "/bg.jpeg"; // default background
+  if (!hasSearched || !weatherArray || weatherArray.length === 0) return defaultBg;
 
-  let name = "—";
-  let sys = { country: "—" };
+  const main = (weatherArray[0]?.main || "").toLowerCase();
+  const isNight = iconCode?.endsWith?.("n");
+
+  if (main === "clear") {
+    return isNight ? "/clearnight.jpg" : "/sunny.jpg";
+  }
+  if (main === "clouds") return "/cloud.jpg";
+  if (main === "rain" || main === "drizzle") return "/rain.jpg";
+  if (main === "snow") return "/snow.jpg";
+  if (main === "thunderstorm") return "/storm.jpg";
+
+  return defaultBg;
+}
+
+function WeatherCard({ data, onSearch, hasSearched }) {
+  // default placeholders
+  let name = "";
+  let sys = { country: "" };
   let main = { temp: 0, humidity: 0 };
   let wind = { speed: 0 };
-  let weather = [{ description: "—", icon: "01d" }];
+  let weather = [{ description: "", icon: "01d" }];
   let localTime = DateTime.now();
-  let zoneName = "—";
+  let zoneName = "UTC";
 
   if (data) {
     const { dt, coord } = data;
@@ -34,15 +52,41 @@ function WeatherCard({ data, onSearch }) {
   const iconCode = weather[0]?.icon;
   const weatherIcon = `https://openweathermap.org/img/wn/${iconCode}@4x.png`;
 
+  // choose background based on weather condition
+  const leftBg = useMemo(
+    () => selectBackground({ weatherArray: weather, iconCode, hasSearched }),
+    [weather, iconCode, hasSearched]
+  );
+
+  // preload backgrounds
+  useEffect(() => {
+    const imagesToPreload = [
+      "/bg.jpeg",
+      "/sunny.jpg",
+      "/cloud.jpg",
+      "/rain.jpg",
+      "/snow.jpg",
+      "/storm.jpg",
+      "/clearnight.jpg",
+    ];
+    imagesToPreload.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
+
   return (
     <div className="flex w-[700px] h-[400px] rounded-2xl shadow-2xl overflow-hidden">
       {/* Left side */}
       <div
-        className="w-1/2 bg-cover bg-center flex flex-col justify-between p-6 text-white"
-        style={{ backgroundImage: `url(${bgImage})` }}
+        className="w-1/2 bg-cover bg-center flex flex-col justify-between p-6 text-white transition-all duration-700 ease-out relative"
+        style={{
+          backgroundImage: `url(${leftBg})`,
+        }}
       >
-        {/* Weather icon */}
-        <div className="flex justify-start">
+        <div className="absolute inset-0 bg-black/20 pointer-events-none"></div>
+
+        <div className="flex justify-start relative z-10">
           <img
             src={weatherIcon}
             alt="Weather Icon"
@@ -50,8 +94,7 @@ function WeatherCard({ data, onSearch }) {
           />
         </div>
 
-        {/* Info */}
-        <div className="flex flex-col">
+        <div className="flex flex-col relative z-10">
           <p className="text-sm font-light">
             {localTime.toFormat("yyyy-LL-dd HH:mm")}
           </p>
@@ -62,7 +105,7 @@ function WeatherCard({ data, onSearch }) {
           </h2>
 
           <p className="text-6xl font-extrabold mt-2">
-            {Math.round(main?.temp)}°C
+            {typeof main?.temp === "number" ? Math.round(main.temp) : main?.temp}°C
           </p>
         </div>
       </div>
@@ -88,7 +131,6 @@ function WeatherCard({ data, onSearch }) {
           </div>
         </div>
 
-        {/* Search Bar */}
         <SearchBar onSearch={onSearch} />
       </div>
     </div>
